@@ -16,7 +16,7 @@ function Home() {
 
   <div className="grid grid-cols-1 md:grid-cols-12 gap-6 flex-grow">
 
-    <div className="md:col-span-3 bg-gray-800 p-4 rounded-xl shadow-md border border-gray-700 h-auto sticky top-0">
+    <div className=" md:col-span-3 bg-gray-800 p-4 rounded-xl shadow-md border border-gray-700 h-auto sticky top-0">
       <Profile />
     </div>
 

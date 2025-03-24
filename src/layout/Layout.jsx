@@ -10,7 +10,7 @@ function Layout() {
   return (
     <>
     <div className="min-h-screen bg-black ">
-      {isAuthenticated ? <Home /> : <AuthPage onLogin={() => dispatch(login())} />}
+      {isAuthenticated ? <Home /> : <AuthPage onLogin={() => ( sessionStorage.removeItem("user"),dispatch(login()))} />}
     </div>
      
     </>

@@ -8,7 +8,7 @@ function Leanding() {
   return (
     <>
     <div className='flex flex-col items-center justify-cente'>
-      {add ?<Addpost setAdd={setAdd}/>: <MdLibraryAdd className='text-white cursor-pointer' size={20} onClick={()=>setAdd(true)}/>}
+      {add ?<Addpost setAdd={setAdd}/>: <MdLibraryAdd className='text-[#ff6600] text-2xl cursor-pointer' size={24} onClick={()=>setAdd(true)}/>}
     </div>
     <Outlet/>
   

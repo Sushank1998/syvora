@@ -15,9 +15,12 @@ function Profile() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
+  const isConfirmed = window.confirm("Are you sure you want to log out?");
+  if (isConfirmed) {
     dispatch(logout());
     navigate("/");
-  };
+  }
+};
 
   const sidebar = [
     { path: "/", icon: <MdHomeFilled />, title: "Main" },
@@ -42,7 +45,7 @@ function Profile() {
                 <div
                   className={`flex items-center gap-5 px-5 py-3 rounded-lg transition-all duration-300 ${
                     location.pathname === item.path
-                      ? "bg-gray-800 text-yellow-400 shadow-lg"
+                      ? "bg-gray-800 text-[#ff6600] shadow-lg"
                       : "text-gray-400 hover:bg-gray-800 hover:text-white"
                   }`}
                 >

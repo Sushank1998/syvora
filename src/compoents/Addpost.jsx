@@ -109,7 +109,7 @@ const handleCross = () => {
 
           <button
             type="submit"
-            className="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold hover:bg-indigo-700 transition duration-300 shadow-md"
+            className="w-full bg-[#ff6600] text-white py-3 rounded-lg font-bold hover:bg-[#ff4000c7] transition duration-300 shadow-md"
           >
             Post
           </button>

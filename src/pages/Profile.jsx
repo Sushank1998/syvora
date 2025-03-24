@@ -30,7 +30,6 @@ function Profile() {
           },
         }
       );
-      console.log("jejjeje res====>", res.data);
 
       let updatedUser2 = {
         name: res.data.username,
@@ -68,7 +67,6 @@ function Profile() {
     
 
       console.log("Profile updated:", res.data);
-      alert("Profile updated successfully!");
     } catch (error) {
       console.error(
         "Error updating profile:",
@@ -126,7 +124,7 @@ console.log("newProfilePicture",newProfilePicture)
           <img
             src={"http://localhost:5432" + userProfileSelector?.profilePicture }
             alt="Profile"
-            className="w-24 h-24 rounded-full border-4 border-gray-700 shadow-md hover:scale-105 transition-transform duration-300"
+            className="w-24 h-24 rounded-full border-4 border-[#ff6600] shadow-md hover:scale-105 transition-transform duration-300"
           />
 
           <input
@@ -139,7 +137,7 @@ console.log("newProfilePicture",newProfilePicture)
 
           <button
             type="submit"
-            className="bg-yellow-200 px-4 py-1 text-blue-950 rounded font-bold mt-5 cursor-pointer"
+            className="bg-[#ff6600] px-4 py-1 text-white rounded font-bold mt-5 cursor-pointer"
           >
             Upload Img
           </button>
@@ -181,7 +179,7 @@ console.log("newProfilePicture",newProfilePicture)
             className="w-full p-3 bg-gray-800 text-gray-300 border border-gray-700 rounded-lg"
             placeholder="Enter your bio"
           />
-          {/* Save Button */}
+          
           <button
             onClick={handleUpdate}
             className="w-full bg-indigo-500 hover:bg-indigo-600 text-white py-3 rounded-lg font-bold transition-all duration-200"
@@ -192,7 +190,7 @@ console.log("newProfilePicture",newProfilePicture)
       ) : (
         <button
           onClick={() => setIsEditing(true)}
-          className="w-full bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-lg font-bold mt-4 transition-all duration-200"
+          className="w-full bg-[#ff6600] hover:bg-gray-600 text-white py-3 rounded-lg font-bold mt-4 transition-all duration-200"
         >
           Edit Profile
         </button>

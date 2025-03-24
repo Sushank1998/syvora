@@ -18,7 +18,7 @@ console.log("selecter",userProfileSelector)
     <img
       src={"http://localhost:5432" + userProfileSelector?.profilePicture || newProfilePicture }
       alt="Profile"
-      className="w-24 h-24 rounded-full object-cover border-4 border-gray-700 shadow-md hover:scale-105 transition-transform duration-300"
+      className="w-24 h-24 rounded-full object-cover border-4 border-[#ff6600] shadow-md hover:scale-105 transition-transform duration-300"
     />
     <h1 className="mt-4 text-2xl font-bold tracking-wide text-gray-100">{userProfileSelector?.name || "User"}</h1>
   </div>
@@ -27,11 +27,11 @@ console.log("selecter",userProfileSelector)
   <div className="flex flex-wrap justify-center sm:justify-around gap-4 mt-6 px-4">
   <div className="text-center">
     <p className="text-gray-400 text-xs sm:text-sm uppercase">Followers</p>
-    <p className="text-xl sm:text-2xl font-semibold text-indigo-400">{followers.length}</p>
+    <p className="text-xl sm:text-2xl font-semibold text-[#ff6600]">{followers.length}</p>
   </div>
   <div className="text-center">
     <p className="text-gray-400 text-xs sm:text-sm uppercase">Following</p>
-    <p className="text-xl sm:text-2xl font-semibold text-green-400">11</p>
+    <p className="text-xl sm:text-2xl font-semibold text-[#ff6600]">11</p>
   </div>
 </div>
 </div>

@@ -27,6 +27,7 @@ export default function LoginForm({ setLogin }) {
 
       console.log("Login Response:", res.data);
       if (res.status === 200) {
+        sessionStorage.setItem("user", JSON.stringify(res.data));
         dispatch(login(res.data)); 
       } else {
         alert("Invalid credentials, please try again.");
