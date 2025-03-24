@@ -54,7 +54,7 @@ function MyPost() {
       }
     } catch (error) {
       console.error("Error deleting the post:", error);
-      setPostdata((prevPostData) => {
+       setPostdata((prevPostData) => {
         return prevPostData.filter((post, i) => i !== index); // Remove post by index
       });
     }
