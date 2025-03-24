@@ -73,7 +73,6 @@ function Search() {
       
       console.log("Follow API response:", res.data);
   
-     
       setHide(false); 
   
     } catch (error) {
