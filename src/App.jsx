@@ -3,7 +3,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Layout from './layout/Layout'
 import Profile from './pages/Profile'
 import Post from './compoents/Post'
-import AllPost from './pages/AllPost'
+import MyPost from './pages/Mypost'
 
 function App() {
   const router = createBrowserRouter([
@@ -19,8 +19,8 @@ function App() {
           element:<Profile/>
         },
         {
-          path:'/allpost',
-          element:<AllPost/>
+          path:'/mypost',
+          element:<MyPost/>
         },
       ]
     }

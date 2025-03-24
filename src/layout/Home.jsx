@@ -7,19 +7,30 @@ import Notification from '../compoents/Notification'
 function Home() {
   return (
     <>
-    <div className=' px-10 py-6'>
-      <div className='flex items-center gap-2  mb-5'>
-      <img src={logo} alt=""  className='w-10'/>
-      <h2 className='text-white font-bold text-2xl'>Penguin</h2>
+<div className="px-6 py-6 bg-gray-900 min-h-screen">
 
-      </div>
-     <div className='flex justify-between '>
+  <div className="flex items-center gap-3 mb-6">
+    <img src={logo} alt="Logo" className="w-12" />
+    <h2 className="text-white font-extrabold text-3xl tracking-wide">Penguin</h2>
+  </div>
 
-        <div className=' border-gray-400 border p-2 '><Profile/></div>
-        <div className=' w-full  border-r border-l border-gray-400 '><Leanding/></div>
-        <div className='  border-gray-400 border p-2  '><Notification/></div>
-     </div>
-     </div>
+  <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+
+    <div className="md:col-span-3 bg-gray-800 p-4 rounded-xl h-screen shadow-md border border-gray-700">
+      <Profile />
+    </div>
+
+  
+    <div className="md:col-span-6 bg-gray-800 p-6 rounded-xl h-screen shadow-md border border-gray-700">
+      <Leanding />
+    </div>
+
+    <div className="md:col-span-3 bg-gray-800 p-4 rounded-xl h-screen shadow-md border border-gray-700">
+      <Notification />
+    </div>
+  </div>
+</div>
+
     </>
   )
 }

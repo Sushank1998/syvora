@@ -1,26 +1,41 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FiSearch } from "react-icons/fi";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { followerAdd } from "../features/followingSlice"; 
+import axios from "axios";
 
 function Search() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [hide, setHide] = useState(false);
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.auth.user);
 
-  const data = [
-    "React",
-    "JavaScript",
-    "Tailwind CSS",
-    "Node.js",
-    "Next.js",
-    "TypeScript",
-    "Redux",
-    "GraphQL",
-    "MongoDB",
-    "Firebase",
-  ];
+  const [userID] =useState(user.user_id)
+
+  const fetchname = async () => {
+    try {
+      const res = await axios.get("http://localhost:5432/api/v1/all-profiles?name=" + query, {
+        headers: {
+          "Content-Type": "application/json",
+          authorization: user?.accessToken,
+        },
+      });
+      
+      console.log("res=====>", res.data);
+  
+   
+      setResults(res.data.map((user) => ({ name: user.username, userId: user.user_id }))); 
+    } catch (error) {
+      console.error("Error fetching profiles:", error);
+    }
+  };
+  useEffect(() => {
+    if (query.length >= 3) {
+      fetchname();
+    }
+  }, [query]);
+
 
   const handleSearch = (e) => {
     setQuery(e.target.value);
@@ -29,47 +44,82 @@ function Search() {
       setQuery("")
       return;
     }
-    setResults(
-      data.filter((item) =>
-        item.toLowerCase().includes(e.target.value.toLowerCase())
-      )
-    );
   };
 
-  const handleSelect = (item) => {
-    setQuery(item);
+  const handleSelect = async (item) => {
+    setQuery(item); 
     console.log("Selected Item:", item);
+    console.log("Selected Item:", item.userId);
+    
+   
     dispatch(followerAdd(item)); 
-    setHide(false);
+    
+    
+    const requestBody = {
+      following_id: item.userId, 
+      follower_id: userID, 
+    };
+ 
+    const headers = {
+      "Content-Type": "application/json",
+      authorization: user?.accessToken,
+    };
+  
+
+    try {
+      const res = await axios.post("http://localhost:5432/api/v1/following", requestBody, {
+        headers: headers,
+      });
+      
+      console.log("Follow API response:", res.data);
+  
+     
+      setHide(false); 
+  
+    } catch (error) {
+      console.error("Error while following:", error);
+    }
   };
 
   return (
-    <div className="relative flex items-center border border-gray-300 px-3 py-2 bg-black">
-      <FiSearch className="text-gray-500" />
-      <input
-        type="text"
-        placeholder="Search friend..."
-        className="ml-2 w-full outline-none text-white"
-        onFocus={() => setHide(true)}
-        onBlur={() => setTimeout(() => setHide(false), 200)}
-        value={query}
-        onChange={handleSearch}
-      />
+    <div className="relative w-full sm:w-auto">
+    
+    <div className="fixed top-0 left-0 w-full bg-gray-900 p-4 sm:relative sm:p-0 sm:bg-transparent z-20">
+      <div className="relative flex items-center px-4 py-2 bg-gray-800 rounded-xl shadow-md border border-gray-700">
+        
+        <FiSearch className="text-gray-400 text-lg" />
 
-      {hide && results.length > 0 && (
-        <ul className="absolute right-12 top-12 w-72 bg-white border border-gray-300 mt-1 shadow-md z-10">
-          {results.map((item, index) => (
-            <li
-              key={index}
-              className="p-2 hover:bg-gray-100 cursor-pointer"
-              onClick={() => handleSelect(item)}
-            >
-              {item}
-            </li>
-          ))}
-        </ul>
-      )}
+       
+        <input
+          type="text"
+          placeholder="Search for a friend..."
+          className="ml-3 w-full bg-transparent outline-none text-white placeholder-gray-500 text-sm"
+          onFocus={() => setHide(true)}
+          onBlur={() => setTimeout(() => setHide(false), 200)}
+          value={query}
+          onChange={handleSearch}
+        />
+      </div>
     </div>
+
+
+    {results.length > 0 && hide && (
+  <ul className="absolute top-full left-0 w-full bg-gray-800 border border-gray-700 mt-2 shadow-lg rounded-lg overflow-hidden z-10">
+    {results.map((item, index) => (
+      <li
+        key={index}
+        className="p-3 hover:bg-gray-700 text-white text-sm cursor-pointer transition-all duration-200"
+        onClick={() => {
+          console.log("Item clicked:", item); 
+          handleSelect(item);
+        }}
+      >
+        {item.name}
+      </li>
+    ))}
+  </ul>
+)}
+  </div>
   );
 }
 

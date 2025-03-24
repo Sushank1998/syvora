@@ -1,19 +1,41 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { login } from "../features/authSlice"; 
+import { login } from "../features/authSlice";
+import axios from "axios";
 
 export default function LoginForm({ setLogin }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (email && password) {
-      dispatch(login()); 
-    } else {
+    if (!email || !password) {
       alert("Please enter email and password");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await axios.post(
+        "http://localhost:5432/api/v1/login",
+        { email, password },
+        { headers: { "Content-Type": "application/json" } }
+      );
+
+      console.log("Login Response:", res.data);
+      if (res.status === 200) {
+        dispatch(login(res.data)); 
+      } else {
+        alert("Invalid credentials, please try again.");
+      }
+    } catch (error) {
+      console.error("Login Error:", error);
+      alert("Login failed. Please check your credentials and try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -44,9 +66,10 @@ export default function LoginForm({ setLogin }) {
           </div>
           <button
             type="submit"
-            className="w-full mt-6 bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700"
+            className="w-full mt-6 bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 disabled:bg-gray-700"
+            disabled={loading}
           >
-            Login
+            {loading ? "Logging in..." : "Login"}
           </button>
         </form>
         <p className="mt-4 text-center text-gray-400">

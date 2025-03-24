@@ -1,94 +1,198 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { userData } from "../features/authSlice";
+import { userProfile } from "../features/userProfileSlice";
+import axios from "axios";
 
 function Profile() {
   const dispatch = useDispatch();
+
   const user = useSelector((state) => state.auth.user);
+  const userProfileSelector = useSelector((state) => state.userProfile.user);
 
   const [isEditing, setIsEditing] = useState(false);
-  const [newName, setNewName] = useState(user?.name || "");
-  const [newEmail, setNewEmail] = useState(user?.email || "");
-  const [newPassword, setNewPassword] = useState("");
-  const [newProfilePicture, setNewProfilePicture] = useState(user?.profilePicture || "");
 
-  const handleSave = () => {
-    const updatedUser = {
-      name: newName,
-      email: newEmail,
-      password: newPassword || user.password,
-      profilePicture: newProfilePicture || user.profilePicture,
+  const [newEmail] = useState(user?.email || "");
+  const [newPassword, setNewPassword] = useState("");
+  const [bio, setBio] = useState(userProfileSelector?.bio || "");
+  const [file, setFile] = useState(null);
+  const [newProfilePicture, setNewProfilePicture] = useState(
+    "http://localhost:5432" + userProfileSelector?.profilePicture || ""
+  );
+
+  useEffect(() => {
+    const fetchapi = async () => {
+      const res = await axios.get(
+        `http://localhost:5432/api/v1/user/profile/me/${newEmail}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            authorization: user?.accessToken,
+          },
+        }
+      );
+      console.log("jejjeje res====>", res.data);
+
+      let updatedUser2 = {
+        name: res.data.username,
+        email: res.data.email,
+        dob: res.data.birthdate,
+        bio: res.data.bio,
+        profilePicture: res.data.avatar,
+      };
+
+      dispatch(userProfile(updatedUser2));
     };
 
-    dispatch(userData(updatedUser)); 
-    setIsEditing(false);
+    fetchapi();
+  }, []);
+
+  const handleUpdate = async () => {
+    if (!user?.accessToken) {
+      alert("User is not authenticated.");
+      return;
+    }
+
+    try {
+      const res = await axios.put(
+        `http://localhost:5432/api/v1/user/${newEmail}`,
+        {
+          bio: bio,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: user?.accessToken,
+          },
+        }
+      );
+    
+
+      console.log("Profile updated:", res.data);
+      alert("Profile updated successfully!");
+    } catch (error) {
+      console.error(
+        "Error updating profile:",
+        error.response || error.message || error
+      );
+      alert("Error updating profile.");
+    }
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!file) {
+      alert("Please select an image before uploading.");
+      return;
+    }
+    const formData = new FormData();
+    formData.append("image", file); // selectedFile is the uploaded file
+  
+    try {
+      const res = await axios.post(
+        `http://localhost:5432/api/v1/upload-image-local/${newEmail}`,
+        formData,  
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            authorization: user?.accessToken,
+          },
+        }
+      );
+      console.log("Profile updated:", res.data);
+
+      alert("Profile updated successfully!");
+    } catch (error) {
+      console.error("Failed to upload image", error);
+      alert("Image upload failed.");
+    }
+  };
+
+  const handleImageChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      setFile(selectedFile);
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setNewProfilePicture(reader.result);
+      reader.onload = (e) => {
+        setNewProfilePicture(e.target.result);
       };
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(selectedFile);
     }
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
-      <div className="flex flex-col items-center">
-        <img
-          src={newProfilePicture || "https://via.placeholder.com/150"}
-          alt="Profile"
-          className="w-24 h-24 rounded-full border"
-        />
-        {isEditing && (
+    <div className="max-w-md mx-auto mt-10 p-6 bg-gray-900 text-white shadow-lg rounded-xl transition-all duration-300">
+      <form onSubmit={handleSubmit}>
+        <div className="flex flex-col items-center">
+          <img
+            src=""
+            alt="Profile"
+            className="w-24 h-24 rounded-full border-4 border-gray-700 shadow-md hover:scale-105 transition-transform duration-300"
+          />
+
           <input
             type="file"
             accept="image/*"
-            onChange={handleFileChange}
-            className="mt-2"
+            name="avatar"
+            onChange={handleImageChange}
+            className="mt-2 bg-gray-800 text-gray-300 text-sm text-center cursor-pointer rounded-lg p-2"
           />
-        )}
-        <h2 className="text-xl font-semibold mt-4">{user?.name}</h2>
-        <p className="text-gray-600">{user?.email}</p>
-      </div>
 
+          <button
+            type="submit"
+            className="bg-yellow-200 px-4 py-1 text-blue-950 rounded font-bold mt-5 cursor-pointer"
+          >
+            Upload Img
+          </button>
+
+          <h2 className="text-xl font-semibold mt-4">
+            {userProfileSelector?.name}
+          </h2>
+          <p className="text-gray-400">{userProfileSelector?.email}</p>
+          <p className="text-gray-500 text-sm">{userProfileSelector?.bio}</p>
+        </div>
+      </form>
       {isEditing ? (
-        <div className="mt-4">
+        <div className="mt-4 space-y-3">
           <input
             type="text"
-            value={newName}
-            onChange={(e) => setNewName(e.target.value)}
-            className="w-full p-2 border rounded-md mb-2"
+            readOnly
+            value={userProfileSelector.name}
+            className="w-full p-3 bg-gray-800 text-gray-300 border border-gray-700 rounded-lg"
             placeholder="Enter new name"
           />
           <input
             type="email"
-            value={newEmail}
-            onChange={(e) => setNewEmail(e.target.value)}
-            className="w-full p-2 border rounded-md mb-2"
+            value={userProfileSelector.email}
+            readOnly
+            className="w-full p-3 bg-gray-800 text-gray-300 border border-gray-700 rounded-lg"
             placeholder="Enter new email"
           />
           <input
             type="password"
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
-            className="w-full p-2 border rounded-md mb-2"
+            className="w-full p-3 bg-gray-800 text-gray-300 border border-gray-700 rounded-lg"
             placeholder="Enter new password"
           />
+          <input
+            type="text"
+            value={bio}
+            onChange={(e) => setBio(e.target.value)}
+            className="w-full p-3 bg-gray-800 text-gray-300 border border-gray-700 rounded-lg"
+            placeholder="Enter your bio"
+          />
+          {/* Save Button */}
           <button
-            onClick={handleSave}
-            className="w-full bg-blue-500 text-white py-2 rounded-md"
+            onClick={handleUpdate}
+            className="w-full bg-indigo-500 hover:bg-indigo-600 text-white py-3 rounded-lg font-bold transition-all duration-200"
           >
-            Save
+            Save Changes
           </button>
         </div>
       ) : (
         <button
           onClick={() => setIsEditing(true)}
-          className="w-full bg-gray-700 text-white py-2 rounded-md mt-4"
+          className="w-full bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-lg font-bold mt-4 transition-all duration-200"
         >
           Edit Profile
         </button>

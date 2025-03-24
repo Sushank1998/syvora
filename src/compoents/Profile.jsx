@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { logout } from "../features/authSlice"; 
+import { logout } from "../features/authSlice";
 import { MdHomeFilled } from "react-icons/md";
 import { FaGrinBeam } from "react-icons/fa";
 import { IoNotifications } from "react-icons/io5";
@@ -15,49 +15,84 @@ function Profile() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    dispatch(logout()); 
-    navigate("/"); 
+    dispatch(logout());
+    navigate("/");
   };
 
   const sidebar = [
     { path: "/", icon: <MdHomeFilled />, title: "Main" },
     { path: "/profile", icon: <FaGrinBeam />, title: "Profile" },
-    { path: "/notifications", icon: <IoNotifications />, title: "Notifications" },
-    { path: "/allpost", icon: <BsFillPostageHeartFill />, title: "AllPost" },
+    { path: "/mypost", icon: <BsFillPostageHeartFill />, title: "MyPost" },
   ];
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 640);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
-    <div className="w-1/2 hidden sm:block">
-      <div className="flex flex-col text-white text-xl font-bold text-center">
-        {sidebar.map((item) => (
+<>      {!isMobile && (
+        <div className="w-64 bg-gray-900 h-screen hidden sm:flex flex-col justify-between p-5 rounded-r-lg shadow-lg">
+          {/* Sidebar Items */}
+          <div className="space-y-2">
+            {sidebar.map((item) => (
+              <Link key={item.path} to={item.path}>
+                <div
+                  className={`flex items-center gap-5 px-5 py-3 rounded-lg transition-all duration-300 ${
+                    location.pathname === item.path
+                      ? "bg-gray-800 text-yellow-400 shadow-md"
+                      : "text-gray-400 hover:bg-gray-800 hover:text-white"
+                  }`}
+                >
+                  {item.icon}
+                  <h2 className="text-lg font-semibold">{item.title}</h2>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          {/* Logout Button */}
           <div
-            key={item.path}
-            className={`flex justify-start gap-5 px-10 items-center cursor-pointer py-4 ${
-              location.pathname === item.path ? "text-yellow-400 rounded-lg" : ""
-            }`}
+            onClick={handleLogout}
+            className="flex items-center gap-4 px-5 py-3 rounded-lg cursor-pointer text-red-500 hover:bg-red-700 hover:text-white transition-all duration-300"
           >
-            <Link
-              to={item.path}
-              className="flex justify-start gap-5 px-5 items-center cursor-pointer py-4 w-full"
-            >
-              <div>{item.icon}</div>
-              <div>
-                <h2>{item.title}</h2>
+            <RiLogoutCircleRLine size={22} />
+            <h2 className="text-lg font-semibold">Logout</h2>
+          </div>
+        </div>
+      )}
+
+
+      {isMobile && (
+        <div className="fixed bottom-0 left-0 w-full bg-gray-900 shadow-lg flex justify-around items-center py-3 border-t border-gray-700">
+          {sidebar.map((item) => (
+            <Link key={item.path} to={item.path}>
+              <div
+                className={`flex flex-col items-center text-gray-400 transition-all duration-300 ${
+                  location.pathname === item.path
+                    ? "text-yellow-400"
+                    : "hover:text-white"
+                }`}
+              >
+                {item.icon}
+                <span className="text-xs mt-1">{item.title}</span>
               </div>
             </Link>
-          </div>
-        ))}
+          ))}
 
-        {/* Logout Button */}
-        <div
-          onClick={handleLogout}
-          className="flex justify-start gap-5 px-10 items-center cursor-pointer py-4 text-red-500 hover:text-red-700"
-        >
-          <RiLogoutCircleRLine size={20} className="text-white"/>
-          <h2>Logout</h2>
+
+          <div
+            onClick={handleLogout}
+            className="flex flex-col items-center text-red-500 transition-all duration-300 hover:text-red-700 cursor-pointer"
+          >
+            <RiLogoutCircleRLine size={22} />
+            <span className="text-xs mt-1">Logout</span>
+          </div>
         </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 }
 

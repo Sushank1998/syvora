@@ -1,73 +1,117 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addphoto } from "../features/addpostSlice";
+import axios from "axios";
 
 function Addpost({ setAdd }) {
     const [image, setImage] = useState(null);
+    const [uploadPost, setUploadPost] = useState(null);
     const [description, setDescription] = useState("");
+    // const [postimage, setPostimage] = useState(null);
     
-    const dispatch = useDispatch(); // Add useDispatch
+    const dispatch = useDispatch(); 
     const addPhoto = useSelector(state => state.photo?.item || []);  
+    const user = useSelector((state) => state.auth.user);
     console.log("addPhoto>>", addPhoto);
+
+    const [userID] =useState(user.user_id)
+
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
             setImage(URL.createObjectURL(file)); 
+            setUploadPost(file);
         }
+        alert(file);
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        if (!description || !image) {
-            alert("Please add a description and image.");
-            return;
-        }
 
-        dispatch(addphoto({ description, image }));
+    
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
 
-        setAdd(false);
-        setDescription(""); 
-        setImage(null);
-    };
+    const formData = new FormData();
+    formData.append("image", uploadPost); // selectedFile is the uploaded file
+     // selectedFile is the uploaded file
+  
+
+    alert(formData);
+    const res = await axios.post(
+      `http://localhost:5432/api/v1/upload-image-post-local/${userID}`,
+      formData,     
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          authorization: user?.accessToken, 
+        },
+      }
+    );
+    
+    console.log("Profile updated:", res.data);
+    alert("Profile updated successfully!");
+    
+   
+    dispatch(addphoto({ description, image }));
+    
+  
+    setAdd(false);
+    setDescription("");
+    setImage(null);
+  } catch (error) {
+    console.error("Error uploading image:", error.response?.data || error.message);
+    // alert("There was an error updating your profile. Please try again.");
+  }
+};
+
 
     return (
-        <div className="w-full max-w-lg p-6 rounded-2xl shadow-lg text-white">
-            <h2 className="text-2xl font-bold text-center mb-6">Add New Post</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                    <textarea
-                        placeholder="Enter post description"
-                        className="w-full px-4 py-2 mt-2 border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        required
-                        rows="3"
-                    />
-                </div>
+        <div className="w-full max-w-lg p-6 rounded-2xl shadow-xl bg-gray-900 text-white mx-auto">
+        <h2 className="text-2xl font-extrabold text-center mb-6">Add New Post</h2>
+      
+        <form onSubmit={handleSubmit} className="space-y-5">
+    
+          <div>
+            <textarea
+              placeholder="What's on your mind?"
+              className="w-full px-4 py-3 border border-gray-700 bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-300"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              required
+              rows="3"
+            />
+          </div>
+      
 
-                <div>
-                    <input
-                        type="file"
-                        accept="image/*"
-                        className="w-full px-4 py-2 mt-2 rounded-lg cursor-pointer file:bg-indigo-600 file:border-0 file:px-4 file:py-2 file:rounded-lg file:text-white file:hover:bg-indigo-700"
-                        onChange={handleImageChange}
-                    />
-                    {image && (
-                        <div className="mt-4 flex justify-center">
-                            <img src={image} alt="Preview" className="w-32 h-32 rounded-lg object-cover border border-gray-500" />
-                        </div>
-                    )}
-                </div>
+          <div className="relative flex flex-col items-center gap-4">
+            <label className="w-full flex flex-col items-center justify-center bg-gray-800 border border-gray-700 text-gray-400 cursor-pointer rounded-lg px-4 py-3 hover:bg-gray-700 hover:text-white transition">
+              <span className="text-sm font-semibold">Upload an Image</span>
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleImageChange}
+              />
+            </label>
+      
 
-                <button
-                    type="submit"
-                    className="w-full mt-4 bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition"
-                >
-                    Post
-                </button>
-            </form>
-        </div>
+            {image && (
+              <div className="mt-2 flex justify-center">
+                <img src={image} alt="Preview" className="w-32 h-32 rounded-lg object-cover border border-gray-600 shadow-md" />
+              </div>
+            )}
+          </div>
+      
+
+          <button
+            type="submit"
+            className="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold hover:bg-indigo-700 transition duration-300 shadow-md"
+          >
+            Post
+          </button>
+        </form>
+      </div>
     );
 }
 

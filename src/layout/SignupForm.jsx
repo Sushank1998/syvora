@@ -1,27 +1,47 @@
 import React, { useState } from "react";
-import { useDispatch,useSelector } from "react-redux";
-import { login,userData } from "../features/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { login, userData } from "../features/authSlice";
+import axios from "axios";
 
 export default function SignupForm({ setLogin }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  
+
   const dispatch = useDispatch();
-  const selecter = useSelector((state)=>state.auth.user)
-  console.log("selecter",selecter)
+  const selecter = useSelector((state) => state.auth.user);
+  console.log("selecter", selecter);
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     if (email && password) {
       dispatch(login());
-      dispatch(userData({ email, name, password}))
+      fetch();
     } else {
       alert("Please enter email and password");
     }
   };
 
+  console.log(email, name, password);
+
+  const fetch = async () => {
+    const res = await axios.post(
+      "http://localhost:5432/api/v1/register",
+      {
+        username: name,
+        email: email,
+        password: password,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    console.log("res=====",res)
+  };
+  
   return (
     <div className="flex min-h-screen items-center justify-center bg-black">
       <div className="w-full max-w-md bg-gray-900 p-6 rounded-2xl shadow-lg">

@@ -10,10 +10,10 @@ export const authSlice = createSlice({
   initialState,
   reducers: {
     userData: (state, action) => {
-      const { email, name, password, profilePicture } = action.payload;
+      const { email, name, password } = action.payload;
       console.log("action.payload",action.payload)
 
-      state.user = { email, name, password, profilePicture }; 
+      state.user = { email, name, password }; 
     console.log("sss",state)
     console.log("sss",state.user)
     },
