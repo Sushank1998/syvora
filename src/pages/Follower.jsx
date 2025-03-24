@@ -1,25 +1,50 @@
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { followerRemove } from "../features/followingSlice"; 
 import axios from "axios"; // Import axios
 
 function Follower() {
   const dispatch = useDispatch();
-  const followers = useSelector((state) => state.searchName.follow);
-   const user = useSelector((state) => state.auth.user);
-  
-    const [userID] = useState(user.user_id)
+  const user = useSelector((state) => state.auth.user);
+  const [followers, setFollowers] = useState([]); // State to hold followers data
+  const [userID] = useState(user.user_id);
+
+  // Fetch followers when the component loads
+  useEffect(() => {
+    const fetchFollowers = async () => {
+      try {
+        // Set the headers for the API request
+        const headers = {
+          "Content-Type": "application/json",
+          authorization: user?.accessToken,
+        };
+
+        // Make the API call to get the list of followers
+        const response = await axios.get(`http://localhost:5432/api/v1/mefollowing/${userID}`, { headers });
+
+        if (response.status === 200) {
+          setFollowers(response.data.data); 
+          console.log(response.data.data)// Update followers state with the response data
+        } else {
+          console.error('Failed to fetch followers');
+        }
+      } catch (error) {
+        console.error('Error fetching followers:', error);
+      }
+    };
+
+    fetchFollowers(); // Call the function to fetch followers
+  }, [userID]); // Only run when userID changes
 
   const handleUnfollow = async (follower) => {
     try {
       // Prepare the request body with dynamic IDs
       const requestBody = {
-        following_id: follower.userId, // Assuming `follower.userId` holds the ID of the user being unfollowed
+        following_id: follower.following_id, // Assuming `follower.userId` holds the ID of the user being unfollowed
         follower_id: userID, // This should be dynamically set to the logged-in user's ID (e.g., `user.id`)
       };
 
-      console.log("following ID " + follower.userId);
+      console.log("following ID " + follower.following_id);
       console.log("follower ID " + userID);
 
       // Set the headers for the API request
@@ -33,7 +58,8 @@ function Follower() {
 
       // If the API call is successful, dispatch the action to remove the follower from the Redux state
       if (response.status === 200) {
-        dispatch(followerRemove(follower)); // Assuming `followerRemove` handles updating the state
+        dispatch(followerRemove(follower)); 
+        setFollowers(followers.filter(f => f.following_id !== follower.following_id)); // Assuming `followerRemove` handles updating the state
         console.log('Unfollowed successfully');
       } else {
         console.error('Failed to unfollow');
@@ -63,7 +89,7 @@ function Follower() {
                   alt="User"
                   className="w-10 h-10 rounded-full object-cover border border-gray-600"
                 />
-                <h1 className="font-semibold text-white">{follower.name}</h1> 
+                <h1 className="font-semibold text-white">{follower.username}</h1> 
               </div>
 
               {/* Unfollow Button */}

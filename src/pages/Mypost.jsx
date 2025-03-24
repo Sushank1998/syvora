@@ -34,13 +34,13 @@ function MyPost() {
       // Sending DELETE request to API
     
       const response = await axios.post(
-        `http://localhost:5432/api/v1/deletePost/${postId}`,
-        
-          {
-            headers: {
-              "Content-Type": "application/json",
-              authorization: user?.accessToken,
-            },
+        `http://localhost:5432/api/v1/deletePost/${postId}`, // URL
+        {}, // Empty body (if there is no body data)
+        {
+          headers: {
+            "Content-Type": "application/json",
+            authorization: user?.accessToken, // Correctly send the authorization token
+          }
         }
       );
 
