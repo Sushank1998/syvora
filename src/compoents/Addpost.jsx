@@ -34,9 +34,7 @@ const handleSubmit = async (e) => {
   try {
 
     const formData = new FormData();
-    formData.append("image", uploadPost); // selectedFile is the uploaded file
-     // selectedFile is the uploaded file
-  
+    formData.append("image", uploadPost); 
 
     alert(formData);
     const res = await axios.post(

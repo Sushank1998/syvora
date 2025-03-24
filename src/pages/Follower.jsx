@@ -72,10 +72,10 @@ function Follower() {
     <div className="p-5 bg-gray-900 rounded-lg shadow-lg max-w-lg mx-auto w-full">
       <h1 className="font-bold text-white text-2xl mb-5 text-center sm:text-left">Followers</h1>
 
-      {followers.length === 0 ? (
+      {!followers || followers.length == 1 ? (
   <p className="text-gray-400 text-center">No followers yet.</p>
 ) : (
-  <div className="grid gap-3">
+  <div className="grid gap-3 h-40 overflow-y-scroll">
     {followers.map((follower, index) => (
       <div
         key={index}

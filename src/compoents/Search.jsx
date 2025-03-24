@@ -22,7 +22,6 @@ function Search() {
         },
       });
       
-      console.log("res=====>", res.data);
   
    
       setResults(res.data.map((user) => ({ name: user.username, }))); //
