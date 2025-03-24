@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { RxCross2 } from "react-icons/rx";
 import { addphoto } from "../features/addpostSlice";
 import axios from "axios";
 
@@ -64,11 +65,13 @@ const handleSubmit = async (e) => {
     // alert("There was an error updating your profile. Please try again.");
   }
 };
-
+const handleCross = () => {
+  setAdd((prev) => !prev); 
+};
 
     return (
         <div className="w-full max-w-lg p-6 rounded-2xl shadow-xl bg-gray-900 text-white mx-auto">
-        <h2 className="text-2xl font-extrabold text-center mb-6">Add New Post</h2>
+        <h2 className="text-2xl font-extrabold text-center mb-6"><RxCross2 className='cursor-pointer' onClick={handleCross}/>Add New Post</h2>
       
         <form onSubmit={handleSubmit} className="space-y-5">
     

@@ -9,7 +9,7 @@ function Layout() {
   const dispatch = useDispatch();
   return (
     <>
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-black ">
       {isAuthenticated ? <Home /> : <AuthPage onLogin={() => dispatch(login())} />}
     </div>
      

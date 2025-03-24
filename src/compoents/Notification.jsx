@@ -5,7 +5,7 @@ import Follower from '../pages/Follower'
 
 function Notification() {
   return (
-    <div className='w-72  h-screen hidden sm:block'>
+    <div className='w-auto  h-screen hidden sm:block'>
       <Search/>
       <UserProfile/>
       <Follower/>

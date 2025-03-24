@@ -25,7 +25,7 @@ function Search() {
       console.log("res=====>", res.data);
   
    
-      setResults(res.data.map((user) => ({ name: user.username, userId: user.user_id }))); 
+      setResults(res.data.map((user) => ({ name: user.username, }))); //
     } catch (error) {
       console.error("Error fetching profiles:", error);
     }

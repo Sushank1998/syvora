@@ -118,13 +118,13 @@ function Profile() {
       reader.readAsDataURL(selectedFile);
     }
   };
-
+console.log("newProfilePicture",newProfilePicture)
   return (
     <div className="max-w-md mx-auto mt-10 p-6 bg-gray-900 text-white shadow-lg rounded-xl transition-all duration-300">
       <form onSubmit={handleSubmit}>
         <div className="flex flex-col items-center">
           <img
-            src=""
+            src={"http://localhost:5432" + userProfileSelector?.profilePicture }
             alt="Profile"
             className="w-24 h-24 rounded-full border-4 border-gray-700 shadow-md hover:scale-105 transition-transform duration-300"
           />

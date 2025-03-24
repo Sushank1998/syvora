@@ -34,7 +34,7 @@ function Profile() {
 
   return (
 <>      {!isMobile && (
-        <div className="w-64 bg-gray-900 h-screen hidden sm:flex flex-col justify-between p-5 rounded-r-lg shadow-lg">
+        <div className="w-auto hidden sm:flex flex-col justify-between p-5 rounded-r-lg">
           {/* Sidebar Items */}
           <div className="space-y-2">
             {sidebar.map((item) => (
@@ -42,7 +42,7 @@ function Profile() {
                 <div
                   className={`flex items-center gap-5 px-5 py-3 rounded-lg transition-all duration-300 ${
                     location.pathname === item.path
-                      ? "bg-gray-800 text-yellow-400 shadow-md"
+                      ? "bg-gray-800 text-yellow-400 shadow-lg"
                       : "text-gray-400 hover:bg-gray-800 hover:text-white"
                   }`}
                 >
